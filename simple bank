@@ -1,0 +1,40 @@
+// SPDX-License-Identifier: GPL-3.0
+
+pragma solidity >=0.7.0 <0.9.0;
+
+contract MainBank {
+    mapping (address => uint) balances;
+    address public owner;
+
+   constructor ()  {
+        owner = payable(msg.sender);
+    }
+
+    function deposit() public payable {
+       // require(msg.value > 0, "0 da girmezsin be");
+        require(balances[msg.sender]+msg.value > balances[msg.sender] , "Check Balance");
+        balances[msg.sender] += msg.value;
+    }
+
+    function withdraw(uint withdrawAmount) public payable returns(uint){
+        require(withdrawAmount <= balances[msg.sender]   , "Contract money is less than withdrawAmount ");
+        balances[msg.sender] -= withdrawAmount*uint(10**18);
+        payable(msg.sender).transfer(withdrawAmount*uint(10**18)); 
+        return balances[msg.sender];
+    }
+
+    function ContractBalanceView() public view returns (uint){
+        return address(this).balance;
+    }
+
+    
+    function MainBalance() public view returns (uint){
+        return owner.balance;
+    }
+
+    function msgsenderBalance() public view returns(uint){
+        return balances[msg.sender];
+    }
+
+    
+}
